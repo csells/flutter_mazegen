@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'maze.dart';
 import 'dart:io';
@@ -36,28 +39,76 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final maze = Maze(5, 5);
+  final _maze = Maze(10, 10);
+  Timer _timer;
+  Iterable<RowCol> _generator;
 
   @override
   void initState() {
     super.initState();
-    maze.addListener(() => setState(() {}));
+    _generator = _maze.generate();
+    _timer = Timer.periodic(Duration(milliseconds: 1), onTic);
+  }
+
+  void onTic(Timer timer) {
+    var visited = _generator.first;
+    if (visited != null) {
+      debugPrint('visited: ${visited.row}, ${visited.col}');
+      setState(() {});
+    } else {
+      debugPrint('done');
+    }
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
+        backgroundColor: Colors.blue,
         appBar: AppBar(title: Text('Mazegen')),
-        body: Table(
-          border: TableBorder.all(color: Colors.black),
-          children: [
-            for (var row = 0; row != maze.rows; ++row)
-              TableRow(
-                children: [
-                  for (var col = 0; col != maze.cols; ++col)
-                    TableCell(child: Container(color: Colors.red, width: 50, height: 50)),
-                ],
-              ),
-          ],
+        body: Center(
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Column(
+              children: [
+                for (var row = 0; row != _maze.rows; ++row)
+                  Expanded(
+                    child: Row(
+                      children: [
+                        for (var col = 0; col != _maze.cols; ++col)
+                          Expanded(
+                            child: Cell(_maze, row, col),
+                          ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       );
+}
+
+class Cell extends StatelessWidget {
+  final Maze maze;
+  final int row;
+  final int col;
+
+  Cell(this.maze, this.row, this.col);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(style: _getBorderStyle(Wall.top)),
+          left: BorderSide(style: _getBorderStyle(Wall.left)),
+          right: BorderSide(style: _getBorderStyle(Wall.right)),
+          bottom: BorderSide(style: _getBorderStyle(Wall.bottom)),
+        ),
+        color: Colors.grey.shade200,
+      ),
+    );
+  }
+
+  BorderStyle _getBorderStyle(Wall wall) =>
+      maze.getCell(row, col).wallsUp[wall.index] ? BorderStyle.solid : BorderStyle.none;
 }

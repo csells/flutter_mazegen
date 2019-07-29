@@ -9,10 +9,10 @@ class RowCol {
 }
 
 enum Wall {
-  north,
-  east,
-  south,
-  west,
+  top,
+  right,
+  bottom,
+  left,
 }
 
 class Cell {
@@ -33,7 +33,7 @@ class Move {
   Move(this.cellFrom, this.cellTo);
 }
 
-class Maze extends ChangeNotifier {
+class Maze {
   final int rows;
   final int cols;
   final List<Cell> cells;
@@ -86,7 +86,7 @@ Maze Generation:
         goto 5c.
 8.  If there are no skipped moves, stop.
 */
-  void generate() {
+  Iterable<RowCol> generate() sync* {
     // Choose random starting point (a, b).
     int a = _rand.nextInt(rows);
     int b = _rand.nextInt(cols);
@@ -98,7 +98,7 @@ Maze Generation:
       getCell(a, b).visited = true;
 
       // Notify any interested party
-      notifyListeners();
+      yield RowCol(a, b);
 
       // Calculate possible moves; a move is possible if
       //   the cell is one of (a-1, b), (a+1, b), (a, b-1) or (a, b+1) and
@@ -153,14 +153,14 @@ Maze Generation:
         Wall wallFrom;
         if (d == b) {
           if (c > a)
-            wallFrom = Wall.south;
+            wallFrom = Wall.bottom;
           else
-            wallFrom = Wall.north;
+            wallFrom = Wall.top;
         } else {
           if (d > b)
-            wallFrom = Wall.east;
+            wallFrom = Wall.right;
           else
-            wallFrom = Wall.west;
+            wallFrom = Wall.left;
         }
 
         // NOTE: Must calculate cellFrom here and not above

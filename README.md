@@ -1,16 +1,17 @@
-# flutter_mazegen
+# Flutter Mazegen
 
-A new Flutter project.
+Flutter Mazegen is a project to generate mazes in Flutter.
 
-## Getting Started
+After [Bob's dungeon generator post](https://journal.stuffwithstuff.com/2014/12/21/rooms-and-mazes/) appeared on my "news" feed (only 5 years later : ), I was inspired to dust off some old C++ code and make it run on Flutter. It should work on Windows, Mac, Android, iOS and web (although not very well on web yet...).
 
-This project is a starting point for a Flutter application.
+Enjoy!
 
-A few resources to get you started if this is your first Flutter project:
+## Usage
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+```shell
+$ flutter packages get
+$ flutter run -d <Android device>|<iOS device>|windows|macos|chrome
+```
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Demo
+<img src='readme/demo.gif' />

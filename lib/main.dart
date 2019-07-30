@@ -1,14 +1,12 @@
 import 'dart:async';
-import 'dart:math';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'maze.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride;
 
 void _desktopInitHack() {
-  bool isWeb = identical(0, 0.0);
-  if (isWeb) return;
+  if (kIsWeb) return;
 
   if (Platform.isMacOS) {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
@@ -39,23 +37,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _maze = Maze(10, 10);
-  Timer _timer;
-  Iterable<RowCol> _generator;
+  var _maze;
+  Iterator<RowCol> _iterator;
 
   @override
   void initState() {
     super.initState();
-    _generator = _maze.generate();
-    _timer = Timer.periodic(Duration(milliseconds: 1), onTic);
+    go();
   }
 
-  void onTic(Timer timer) {
-    var visited = _generator.first;
-    if (visited != null) {
-      debugPrint('visited: ${visited.row}, ${visited.col}');
+  void go() {
+    _maze = Maze(30, 30);
+    _iterator = _maze.generate().iterator;
+    Timer.periodic(Duration(milliseconds: 1), onTick);
+  }
+
+  void onTick(Timer timer) {
+    if (_iterator.moveNext()) {
+      var visited = _iterator.current;
       setState(() {});
+      debugPrint('visited: ${visited.row}, ${visited.col}');
     } else {
+      timer.cancel();
+      _iterator = null;
+      setState(() {});
       debugPrint('done');
     }
   }
@@ -64,6 +69,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: Colors.blue,
         appBar: AppBar(title: Text('Mazegen')),
+        floatingActionButton:
+            FloatingActionButton(onPressed: _iterator == null ? go : null, child: Icon(Icons.directions_run)),
         body: Center(
           child: AspectRatio(
             aspectRatio: 1,
@@ -75,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         for (var col = 0; col != _maze.cols; ++col)
                           Expanded(
-                            child: Cell(_maze, row, col),
+                            child: CellView(_maze.getCell(row, col)),
                           ),
                       ],
                     ),
@@ -87,28 +94,26 @@ class _HomePageState extends State<HomePage> {
       );
 }
 
-class Cell extends StatelessWidget {
-  final Maze maze;
-  final int row;
-  final int col;
+class CellView extends StatelessWidget {
+  final Cell cell;
 
-  Cell(this.maze, this.row, this.col);
+  CellView(this.cell);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(style: _getBorderStyle(Wall.top)),
-          left: BorderSide(style: _getBorderStyle(Wall.left)),
-          right: BorderSide(style: _getBorderStyle(Wall.right)),
-          bottom: BorderSide(style: _getBorderStyle(Wall.bottom)),
+          top: _getBorderSide(Wall.top),
+          left: _getBorderSide(Wall.left),
+          right: _getBorderSide(Wall.right),
+          bottom: _getBorderSide(Wall.bottom),
         ),
-        color: Colors.grey.shade200,
+        color: cell.visited ? Colors.white : Colors.black,
       ),
     );
   }
 
-  BorderStyle _getBorderStyle(Wall wall) =>
-      maze.getCell(row, col).wallsUp[wall.index] ? BorderStyle.solid : BorderStyle.none;
+  BorderSide _getBorderSide(Wall wall) => BorderSide(
+      width: 5.0, style: cell.wallsUp[wall.index] ? BorderStyle.solid : BorderStyle.none);
 }

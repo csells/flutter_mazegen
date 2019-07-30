@@ -1,7 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
-
 class RowCol {
   final int row;
   final int col;
@@ -41,7 +39,7 @@ class Maze {
   final _rand = Random();
 
   // Translate 2D row, column pair into a 1D offset
-  int _offset(int row, int col) => col * rows + row;
+  int _offset(int row, int col) => row * rows + col;
 
   Maze(this.rows, this.cols) : cells = List<Cell>(rows * cols) {
     for (var col = 0; col < cols; col++) {

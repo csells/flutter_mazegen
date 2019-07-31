@@ -38,7 +38,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var _maze;
-  Iterator<RowCol> _iterator;
+  Iterator<Cell> _iterator;
 
   @override
   void initState() {
@@ -54,14 +54,14 @@ class _HomePageState extends State<HomePage> {
 
   void onTick(Timer timer) {
     if (_iterator.moveNext()) {
-      var visited = _iterator.current;
+      //var visited = _iterator.current;
       setState(() {});
-      debugPrint('visited: ${visited.row}, ${visited.col}');
+      //debugPrint('visited: ${visited.row}, ${visited.col}');
     } else {
       timer.cancel();
       _iterator = null;
       setState(() {});
-      debugPrint('done');
+      //debugPrint('done');
     }
   }
 
@@ -69,8 +69,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: Colors.blue,
         appBar: AppBar(title: Text('Mazegen')),
-        floatingActionButton:
-            FloatingActionButton(onPressed: _iterator == null ? go : null, child: Icon(Icons.directions_run)),
+        floatingActionButton: FloatingActionButton(
+            onPressed: _iterator == null ? go : null, child: Icon(Icons.directions_run)),
         body: Center(
           child: AspectRatio(
             aspectRatio: 1,
@@ -96,7 +96,6 @@ class _HomePageState extends State<HomePage> {
 
 class CellView extends StatelessWidget {
   final Cell cell;
-
   CellView(this.cell);
 
   @override

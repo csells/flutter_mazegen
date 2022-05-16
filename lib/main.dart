@@ -1,26 +1,8 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'maze.dart';
-import 'dart:io';
-import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride;
 
-void _desktopInitHack() {
-  if (kIsWeb) return;
-
-  if (Platform.isMacOS) {
-    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-  } else if (Platform.isLinux || Platform.isWindows) {
-    debugDefaultTargetPlatformOverride = TargetPlatform.android;
-  } else if (Platform.isFuchsia) {
-    debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
-  }
-}
-
-void main() {
-  _desktopInitHack();
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
@@ -37,8 +19,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var _maze;
-  Iterator<Cell> _iterator;
+  final _maze = Maze(30, 30);
+  Iterator<Cell>? _iterator;
 
   @override
   void initState() {
@@ -47,13 +29,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   void go() {
-    _maze = Maze(30, 30);
     _iterator = _maze.generate().iterator;
     Timer.periodic(Duration(milliseconds: 1), onTick);
   }
 
   void onTick(Timer timer) {
-    if (_iterator.moveNext()) {
+    if (_iterator!.moveNext()) {
       //var visited = _iterator.current;
       setState(() {});
       //debugPrint('visited: ${visited.row}, ${visited.col}');
@@ -70,7 +51,8 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.blue,
         appBar: AppBar(title: Text('Mazegen')),
         floatingActionButton: FloatingActionButton(
-            onPressed: _iterator == null ? go : null, child: Icon(Icons.directions_run)),
+            onPressed: _iterator == null ? go : null,
+            child: Icon(Icons.directions_run)),
         body: Center(
           child: AspectRatio(
             aspectRatio: 1,
@@ -114,5 +96,6 @@ class CellView extends StatelessWidget {
   }
 
   BorderSide _getBorderSide(Wall wall) => BorderSide(
-      width: 5.0, style: cell.wallsUp[wall.index] ? BorderStyle.solid : BorderStyle.none);
+      width: 5.0,
+      style: cell.wallsUp[wall.index] ? BorderStyle.solid : BorderStyle.none);
 }

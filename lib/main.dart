@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _maze = Maze(30, 30);
+  Maze? _maze;
   Iterator<Cell>? _iterator;
 
   @override
@@ -29,7 +29,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void go() {
-    _iterator = _maze.generate().iterator;
+    _maze = Maze(30, 30);
+    _iterator = _maze!.generate().iterator;
     Timer.periodic(Duration(milliseconds: 1), onTick);
   }
 
@@ -58,13 +59,13 @@ class _HomePageState extends State<HomePage> {
             aspectRatio: 1,
             child: Column(
               children: [
-                for (var row = 0; row != _maze.rows; ++row)
+                for (var row = 0; row != _maze!.rows; ++row)
                   Expanded(
                     child: Row(
                       children: [
-                        for (var col = 0; col != _maze.cols; ++col)
+                        for (var col = 0; col != _maze!.cols; ++col)
                           Expanded(
-                            child: CellView(_maze.getCell(row, col)),
+                            child: CellView(_maze!.getCell(row, col)),
                           ),
                       ],
                     ),

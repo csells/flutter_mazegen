@@ -40,13 +40,21 @@ class Maze {
   Cell? _adjacentCell(Cell cellFrom, Wall wall) {
     switch (wall) {
       case Wall.top:
-        return getCell(cellFrom.row - 1, cellFrom.col);
+        return cellFrom.row - 1 < 0
+            ? null
+            : getCell(cellFrom.row - 1, cellFrom.col);
       case Wall.left:
-        return getCell(cellFrom.row, cellFrom.col - 1);
+        return cellFrom.col - 1 < 0
+            ? null
+            : getCell(cellFrom.row, cellFrom.col - 1);
       case Wall.bottom:
-        return getCell(cellFrom.row + 1, cellFrom.col);
+        return cellFrom.row + 1 > rows - 1
+            ? null
+            : getCell(cellFrom.row + 1, cellFrom.col);
       case Wall.right:
-        return getCell(cellFrom.row, cellFrom.col + 1);
+        return cellFrom.col + 1 > cols - 1
+            ? null
+            : getCell(cellFrom.row, cellFrom.col + 1);
       default:
         assert(false);
         return null;

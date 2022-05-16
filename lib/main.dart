@@ -1,19 +1,25 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'maze.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const App());
 
-class MyApp extends StatelessWidget {
+class App extends StatelessWidget {
+  const App({super.key});
+
   @override
   Widget build(BuildContext context) => MaterialApp(
         title: 'Mazegen',
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: HomePage(),
+        home: const HomePage(),
       );
 }
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -31,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   void go() {
     _maze = Maze(30, 30);
     _iterator = _maze!.generate().iterator;
-    Timer.periodic(Duration(milliseconds: 1), onTick);
+    Timer.periodic(const Duration(milliseconds: 1), onTick);
   }
 
   void onTick(Timer timer) {
@@ -50,10 +56,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: Colors.blue,
-        appBar: AppBar(title: Text('Mazegen')),
+        appBar: AppBar(title: const Text('Mazegen')),
         floatingActionButton: FloatingActionButton(
             onPressed: _iterator == null ? go : null,
-            child: Icon(Icons.directions_run)),
+            child: const Icon(Icons.directions_run)),
         body: Center(
           child: AspectRatio(
             aspectRatio: 1,
@@ -79,7 +85,7 @@ class _HomePageState extends State<HomePage> {
 
 class CellView extends StatelessWidget {
   final Cell cell;
-  CellView(this.cell);
+  const CellView(this.cell, {super.key});
 
   @override
   Widget build(BuildContext context) {
